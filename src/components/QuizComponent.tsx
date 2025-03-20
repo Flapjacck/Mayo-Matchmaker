@@ -70,16 +70,29 @@ const getResult = (answers: string[]) => {
   const count: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
   answers.forEach((answer) => count[answer]++);
 
-  const topChoice = Object.entries(count).sort((a, b) => b[1] - a[1])[0][0];
-
-  const resultMap: Record<string, string> = {
-    A: "Chipotle Mayo (Bold, smoky, and perfect for tacos, burgers, and grilled meats.)",
-    B: "Garlic Aioli Mayo (Rich, smooth, and packed with garlic flavor—ideal for sandwiches and roasted veggies.)",
-    C: "Garlic Parmesan Mayo (Creamy, cheesy, and indulgent—great for pastas, burgers, and crispy chicken.)",
-    D: "Buttermilk Ranch Mayo (Classic, herby, and creamy—perfect for dipping, BBQ, and comfort foods.)",
+  const selected = Object.entries(count)
+    .filter(([, value]) => value > 0)
+    .map(([key]) => key);
+  const resultMap: Record<string, string[]> = {
+    "A,B": ["Chipotle Mayo", "Spicy Mayo"],
+    "A,C": ["Chipotle Mayo", "Garlic Parmesan Mayo"],
+    "A,D": ["Chipotle Mayo", "Buttermilk Ranch Mayo"],
+    "B,C": ["Spicy Mayo", "Garlic Aioli Mayo"],
+    "B,D": ["Spicy Mayo", "Buttermilk Ranch Mayo"],
+    "C,D": ["Garlic Aioli Mayo", "Garlic Parmesan Mayo"],
+    "A,B,C,D": [
+      "Chipotle Mayo",
+      "Spicy Mayo",
+      "Garlic Aioli Mayo",
+      "Garlic Parmesan Mayo",
+      "Buttermilk Ranch Mayo",
+    ],
   };
 
-  return resultMap[topChoice] || "A unique mayo blend based on your taste!";
+  const key = selected.sort().join(",");
+  const result = resultMap[key] || ["A unique mayo blend based on your taste!"];
+
+  return result.join(" or ");
 };
 
 const QuizComponent: React.FC = () => {
@@ -93,9 +106,9 @@ const QuizComponent: React.FC = () => {
     setAnswers(updatedAnswers);
 
     if (currentQuestion < questions.length - 1) {
-      setTimeout(() => setCurrentQuestion(currentQuestion + 1), 500); // Move to next question after a short delay
+      setTimeout(() => setCurrentQuestion(currentQuestion + 1), 500);
     } else {
-      setTimeout(() => setShowResult(true), 500); // Show results at the end
+      setTimeout(() => setShowResult(true), 500);
     }
   };
 
