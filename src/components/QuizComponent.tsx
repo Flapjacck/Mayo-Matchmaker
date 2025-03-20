@@ -70,7 +70,21 @@ const getResult = (answers: string[]) => {
   const count: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
   answers.forEach((answer) => count[answer]++);
 
-  const selected = Object.entries(count)
+  const sortedEntries = Object.entries(count).sort((a, b) => b[1] - a[1]);
+  const topChoice = sortedEntries[0][0];
+
+  const strongPreferenceMap: Record<string, string> = {
+    A: "Chipotle Mayo (Bold, smoky, and perfect for tacos, burgers, and grilled meats.)",
+    B: "Garlic Aioli Mayo (Rich, smooth, and packed with garlic flavor—ideal for sandwiches and roasted veggies.)",
+    C: "Garlic Parmesan Mayo (Creamy, cheesy, and indulgent—great for pastas, burgers, and crispy chicken.)",
+    D: "Buttermilk Ranch Mayo (Classic, herby, and creamy—perfect for dipping, BBQ, and comfort foods.)",
+  };
+
+  if (sortedEntries[0][1] > sortedEntries[1][1]) {
+    return strongPreferenceMap[topChoice];
+  }
+
+  const selected = sortedEntries
     .filter(([, value]) => value > 0)
     .map(([key]) => key);
   const resultMap: Record<string, string[]> = {
@@ -90,9 +104,9 @@ const getResult = (answers: string[]) => {
   };
 
   const key = selected.sort().join(",");
-  const result = resultMap[key] || ["A unique mayo blend based on your taste!"];
-
-  return result.join(" or ");
+  return (
+    resultMap[key]?.join(" or ") || "A unique mayo blend based on your taste!"
+  );
 };
 
 const QuizComponent: React.FC = () => {
