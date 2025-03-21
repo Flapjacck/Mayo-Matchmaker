@@ -9,57 +9,65 @@ const questions: Question[] = [
   {
     text: "How do you feel about spicy food?",
     options: [
-      { label: "Love it—bring on the heat!", value: "A" },
+      { label: "Love it—give me bold, smoky heat!", value: "A" },
+      { label: "Enjoy spice, but I prefer it balanced.", value: "B" },
       {
-        label: "A little spice is great, but nothing too intense.",
-        value: "B",
-      },
-      {
-        label: "I prefer mild, creamy flavors with more depth than heat.",
+        label: "A mild kick paired with fresh citrusy zest is perfect.",
         value: "C",
       },
-      {
-        label: "No spice for me—I like smooth, cheesy, or herby flavors.",
-        value: "D",
-      },
+      { label: "No spice for me", value: "D" },
     ],
   },
   {
-    text: "What’s your ideal sandwich topping?",
+    text: "What’s your go-to sandwich topping?",
     options: [
-      { label: "Jalapeños or a smoky, spicy sauce.", value: "A" },
-      { label: "A rich, garlicky spread.", value: "B" },
-      { label: "A parmesan cheese crust or melted cheese.", value: "C" },
-      { label: "A creamy ranch-style dressing.", value: "D" },
-    ],
-  },
-  {
-    text: "What type of cuisine do you love most?",
-    options: [
-      { label: "Mexican or Cajun—bold and spicy.", value: "A" },
+      { label: "Smoky peppers, jalapeños, or spicy sauces.", value: "A" },
+      { label: "A creamy sauce with a gentle, balanced spice.", value: "B" },
       {
-        label: "Mediterranean or Italian—garlic and rich flavors.",
-        value: "B",
-      },
-      { label: "Classic American—cheesy, creamy, and indulgent.", value: "C" },
-      {
-        label: "Southern comfort—BBQ, ranch flavors, and hearty meals.",
-        value: "D",
-      },
-    ],
-  },
-  {
-    text: "If you could travel for food, where would you go?",
-    options: [
-      { label: "Mexico—tacos, hot sauce, and smoky flavors.", value: "A" },
-      { label: "Italy—garlic, olive oil, and creamy sauces.", value: "B" },
-      {
-        label: "A classic pizzeria—parmesan, garlic, and creamy pastas.",
+        label: "Fresh toppings like lime zest, chili flakes, or cilantro.",
         value: "C",
       },
       {
         label:
-          "A countryside diner—crispy chicken, ranch flavors, and hearty meals.",
+          "Garlic spreads, herb-infused dressings, or olive oil-based sauces.",
+        value: "D",
+      },
+    ],
+  },
+  {
+    text: "Which cuisine excites your taste buds most?",
+    options: [
+      { label: "Mexican or Cajun—smoky, spicy, bold.", value: "A" },
+      {
+        label: "Asian fusion or sushi—balanced spice with creamy textures.",
+        value: "B",
+      },
+      {
+        label: "Thai or Latin—fresh citrus, mild chili, bright flavors.",
+        value: "C",
+      },
+      {
+        label:
+          "Italian or Mediterranean—rich garlic, fresh herbs, creamy textures.",
+        value: "D",
+      },
+    ],
+  },
+  {
+    text: "If you could take a flavor vacation, where would you go?",
+    options: [
+      {
+        label: "Mexico—spicy tacos, smoky peppers, and bold flavors.",
+        value: "A",
+      },
+      { label: "Japan—spicy tuna rolls, creamy spicy ramen.", value: "B" },
+      {
+        label: "Thailand—fresh seafood, chili lime salads, vibrant flavors.",
+        value: "C",
+      },
+      {
+        label:
+          "Italy or Greece—garlicky pasta dishes, herby flatbreads, rich sauces.",
         value: "D",
       },
     ],
@@ -70,43 +78,38 @@ const getResult = (answers: string[]) => {
   const count: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
   answers.forEach((answer) => count[answer]++);
 
-  const sortedEntries = Object.entries(count).sort((a, b) => b[1] - a[1]);
-  const topChoice = sortedEntries[0][0];
+  const sorted = Object.entries(count).sort((a, b) => b[1] - a[1]);
+  const topTwo = sorted.slice(0, 2).map(([key]) => key);
+  const [top] = topTwo;
 
-  const strongPreferenceMap: Record<string, string> = {
-    A: "Chipotle Mayo (Bold, smoky, and perfect for tacos, burgers, and grilled meats.)",
-    B: "Garlic Aioli Mayo (Rich, smooth, and packed with garlic flavor—ideal for sandwiches and roasted veggies.)",
-    C: "Garlic Parmesan Mayo (Creamy, cheesy, and indulgent—great for pastas, burgers, and crispy chicken.)",
-    D: "Buttermilk Ranch Mayo (Classic, herby, and creamy—perfect for dipping, BBQ, and comfort foods.)",
+  const resultMap: Record<string, string> = {
+    A: "Chipotle Mayo (Bold, smoky, and spicy—perfect for tacos, burgers, and grilled meats.)",
+    B: "Spicy Mayo (Balanced spice with creamy smoothness—excellent for sandwiches, sushi, and versatile dishes.)",
+    C: "Chilli Lime Mayo (Zesty lime, mild chili—ideal for seafood, tacos, salads, wraps, or grilled veggies.)",
+    D: "Garlic Aioli Mayo or Italian Herb and Garlic Mayo (Rich garlic, herbs, and creamy textures—excellent for sandwiches, chicken, roasted veggies, pastas, or dipping sauces.)",
   };
 
-  if (sortedEntries[0][1] > sortedEntries[1][1]) {
-    return strongPreferenceMap[topChoice];
+  const blends: Record<string, string> = {
+    AB: "Chipotle Mayo or Spicy Mayo (You prefer bold spice but sometimes like a more balanced, creamy kick.)",
+    AC: "Chipotle Mayo or Chilli Lime Mayo (Bold heat excites you, yet fresh zest sometimes catches your taste.)",
+    AD: "Chipotle Mayo or Garlic Aioli / Italian Herb and Garlic Mayo (You alternate between bold spicy flavors and creamy, garlicky, herby comforts.)",
+    BC: "Spicy Mayo or Chilli Lime Mayo (You appreciate balanced spice, creamy texture, and fresh, citrusy flavors.)",
+    BD: "Spicy Mayo or Garlic Aioli / Italian Herb and Garlic Mayo (You love gentle spice paired with creamy garlic and herb flavors.)",
+    CD: "Chilli Lime Mayo or Garlic Aioli / Italian Herb and Garlic Mayo (Fresh, zesty flavors and garlicky, herb-rich profiles equally appeal to you.)",
+    ABCD: "Chipotle Mayo, Spicy Mayo, Chilli Lime Mayo, Garlic Aioli Mayo, or Italian Herb and Garlic Mayo (Your palate enjoys variety—bold, spicy, zesty, creamy garlic-herb flavors all appeal to you.)",
+  };
+
+  const allLetters = Object.keys(count).filter((key) => count[key] > 0);
+  if (allLetters.length === 4) {
+    return blends["ABCD"];
   }
 
-  const selected = sortedEntries
-    .filter(([, value]) => value > 0)
-    .map(([key]) => key);
-  const resultMap: Record<string, string[]> = {
-    "A,B": ["Chipotle Mayo", "Spicy Mayo"],
-    "A,C": ["Chipotle Mayo", "Garlic Parmesan Mayo"],
-    "A,D": ["Chipotle Mayo", "Buttermilk Ranch Mayo"],
-    "B,C": ["Spicy Mayo", "Garlic Aioli Mayo"],
-    "B,D": ["Spicy Mayo", "Buttermilk Ranch Mayo"],
-    "C,D": ["Garlic Aioli Mayo", "Garlic Parmesan Mayo"],
-    "A,B,C,D": [
-      "Chipotle Mayo",
-      "Spicy Mayo",
-      "Garlic Aioli Mayo",
-      "Garlic Parmesan Mayo",
-      "Buttermilk Ranch Mayo",
-    ],
-  };
+  if (sorted[0][1] === sorted[1][1]) {
+    const key = topTwo.sort().join("");
+    return blends[key] || resultMap[top];
+  }
 
-  const key = selected.sort().join(",");
-  return (
-    resultMap[key]?.join(" or ") || "A unique mayo blend based on your taste!"
-  );
+  return resultMap[top];
 };
 
 const QuizComponent: React.FC = () => {
